@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = 'cherry3104'
-        DOCKERHUB_PASS = credentials('dockerconnection) // stored in Jenkins
-        IMAGE_NAME = 'trendproject/trent-react-app'
+        DOCKERHUB_CREDENTIALS = credentials('dockerconnection')
+        IMAGE_NAME = "trendproject/trent-react-app"
+        IMAGE_TAG = "latest"
+        AWS_REGION = "ap-south-1"
+        EKS_CLUSTER = "my-eks-cluster"
     }
 
     stages {
@@ -17,7 +19,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${Trend_react_app}:${latest}"
+                sh "docker build -t ${trend_react_app}:${latest}"
             }
         }
 
@@ -29,14 +31,24 @@ pipeline {
                 sh "docker push ${cherry3104/trend_react_app}:latest"
             }
         }
-    }
+            stage('Deploy to EKS') {
+            steps {
+                sh '''
+                echo "Updating kubeconfig for EKS..."
+                aws eks update-kubeconfig --region $ap-south-1 --name $my-eks-cluster
 
-    post {
+                echo "Deploying to Kubernetes..."
+                kubectl apply -f deployment.yml
+                kubectl apply -f service.yml
+                '''
+            }
+
+  post {
         success {
-            echo "Build & Push successful: ${cherry3104/trend_react_app}:latest"
+            echo 'Deployment successful!'
         }
         failure {
-            echo "Build failed."
+            echo 'Build or deployment failed.'
         }
     }
 }
