@@ -35,7 +35,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Updating kubeconfig for EKS..."
-                aws eks update-kubeconfig --region $ap-south-1 --name $my-eks-cluster2
+                aws eks update-kubeconfig --region $ap-south-1 --name $my-eks-cluster3
 
                 echo "Deploying to Kubernetes..."
                 kubectl apply -f deployment.yml
