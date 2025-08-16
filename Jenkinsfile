@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = "trendproject/trent-react-app"
         IMAGE_TAG = "latest"
         AWS_REGION = "ap-south-1"
-        EKS_CLUSTER = "my-eks-cluster"
+        EKS_CLUSTER = "my-eks-cluster3"
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${trendproject/trent-react-app}:${latest} ."
+                sh "docker build -t trent-react-app ."
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerconnection', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push ${trendproject/trent-react-app}:${latest}
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
@@ -36,6 +36,7 @@ pipeline {
 
         stage('Deploy to EKS') {
             steps {
+                sh """
                 echo "Deploying to Kubernetes..."
                 kubectl apply -f deployment.yml
                 kubectl apply -f service.yml
