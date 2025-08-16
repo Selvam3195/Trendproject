@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerconnection')
-        IMAGE_NAME = "trendproject/trent-react-app"
+        IMAGE_NAME = "cherry3104/trend_react_app"
         IMAGE_TAG = "latest"
         AWS_REGION = "ap-south-1"
         EKS_CLUSTER = "my-eks-cluster3"
