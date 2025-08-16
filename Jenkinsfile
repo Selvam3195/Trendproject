@@ -27,6 +27,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerconnection', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
+                    echo "Updating kubeconfig for EKS..."
+                     aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                         docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     """
