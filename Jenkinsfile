@@ -19,31 +19,32 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${trend_react_app}:${latest}"
+                sh "docker build -t ${trendproject/trent-react-app}:${latest} ."
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                sh "echo ${DOCKERHUB_PASS} | docker login -u ${cherry3104} --password-stdin"
-                sh "docker push ${trent_react_app}:${latest}"
-                sh "docker tag ${cherry3104}:${latest} ${trend_react_app}:latest"
-                sh "docker push ${cherry3104/trend_react_app}:latest"
+                withCredentials([usernamePassword(credentialsId: 'dockerconnection', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push ${trendproject/trent-react-app}:${latest}
+                    """
+                }
             }
         }
-            stage('Deploy to EKS') {
-            steps {
-                sh '''
-                echo "Updating kubeconfig for EKS..."
-                aws eks update-kubeconfig --region $ap-south-1 --name $my-eks-cluster3
 
+        stage('Deploy to EKS') {
+            steps {
                 echo "Deploying to Kubernetes..."
                 kubectl apply -f deployment.yml
                 kubectl apply -f service.yml
-                '''
+                """
             }
+        }
+    }
 
-  post {
+    post {
         success {
             echo 'Deployment successful!'
         }
@@ -52,4 +53,3 @@ pipeline {
         }
     }
 }
-    }
